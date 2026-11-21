@@ -1,0 +1,26 @@
+﻿{
+    "early_hints":  {
+                        "value":  "on"
+                    },
+    "brotli":  {
+                   "value":  "on"
+               },
+    "http3":  {
+                  "value":  "on"
+              },
+    "0rtt":  {
+                 "value":  "on"
+             },
+    "always_use_https":  {
+                             "value":  "on"
+                         },
+    "ssl":  {
+                "value":  "strict"
+            },
+    "automatic_https_rewrites":  {
+                                     "value":  "on"
+                                 },
+    "min_tls_version":  {
+                            "value":  "1.2"
+                        }
+}

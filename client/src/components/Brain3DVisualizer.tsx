@@ -15,11 +15,12 @@ interface Brain3DVisualizerProps {
 
 // Parser for BrainFacts / Maya Three.js JSON geometry format 3.0
 function parseLegacyModel(json: any): THREE.BufferGeometry {
+  if (!json) return new THREE.BufferGeometry();
   const model = json.model || json;
-  const vertices: number[] = model.vertices || [];
-  const normals: number[] = model.normals || [];
-  const uvs: number[] = model.uvs && model.uvs[0] ? model.uvs[0] : [];
-  const faces: number[] = model.faces || [];
+  const vertices: number[] = Array.isArray(model.vertices) ? model.vertices : [];
+  const normals: number[] = Array.isArray(model.normals) ? model.normals : [];
+  const uvs: number[] = Array.isArray(model.uvs) && model.uvs[0] ? model.uvs[0] : [];
+  const faces: number[] = Array.isArray(model.faces) ? model.faces : [];
 
   const positions: number[] = [];
   const parsedNormals: number[] = [];
@@ -39,33 +40,37 @@ function parseLegacyModel(json: any): THREE.BufferGeometry {
     const hasFaceColor = (type & 64) !== 0;
     const hasFaceVertexColor = (type & 128) !== 0;
 
+    if (offset + (isQuad ? 4 : 3) > zLength) break;
+
     const a = faces[offset++];
     const b = faces[offset++];
     const c = faces[offset++];
     const d = isQuad ? faces[offset++] : 0;
 
-    if (hasMaterial) offset++;
-    if (hasFaceUv) offset++;
+    if (hasMaterial && offset < zLength) offset++;
+    if (hasFaceUv && offset < zLength) offset++;
     let uvA = 0, uvB = 0, uvC = 0, uvD = 0;
     if (hasFaceVertexUv) {
-      uvA = faces[offset++];
-      uvB = faces[offset++];
-      uvC = faces[offset++];
-      if (isQuad) uvD = faces[offset++];
+      if (offset < zLength) uvA = faces[offset++];
+      if (offset < zLength) uvB = faces[offset++];
+      if (offset < zLength) uvC = faces[offset++];
+      if (isQuad && offset < zLength) uvD = faces[offset++];
     }
-    if (hasFaceNormal) offset++;
+    if (hasFaceNormal && offset < zLength) offset++;
     let nA = 0, nB = 0, nC = 0, nD = 0;
     if (hasFaceVertexNormal) {
-      nA = faces[offset++];
-      nB = faces[offset++];
-      nC = faces[offset++];
-      if (isQuad) nD = faces[offset++];
+      if (offset < zLength) nA = faces[offset++];
+      if (offset < zLength) nB = faces[offset++];
+      if (offset < zLength) nC = faces[offset++];
+      if (isQuad && offset < zLength) nD = faces[offset++];
     }
-    if (hasFaceColor) offset++;
+    if (hasFaceColor && offset < zLength) offset++;
     if (hasFaceVertexColor) offset += isQuad ? 4 : 3;
 
     const addV = (vIdx: number, nIdx?: number, uvIdx?: number) => {
-      positions.push(vertices[vIdx * 3], vertices[vIdx * 3 + 1], vertices[vIdx * 3 + 2]);
+      if (vIdx * 3 + 2 < vertices.length) {
+        positions.push(vertices[vIdx * 3], vertices[vIdx * 3 + 1], vertices[vIdx * 3 + 2]);
+      }
       if (nIdx !== undefined && normals.length > nIdx * 3 + 2) {
         parsedNormals.push(normals[nIdx * 3], normals[nIdx * 3 + 1], normals[nIdx * 3 + 2]);
       }
@@ -91,15 +96,67 @@ function parseLegacyModel(json: any): THREE.BufferGeometry {
 
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-  if (parsedNormals.length === positions.length) {
+  if (parsedNormals.length === positions.length && positions.length > 0) {
     geometry.setAttribute('normal', new THREE.Float32BufferAttribute(parsedNormals, 3));
-  } else {
+  } else if (positions.length > 0) {
     geometry.computeVertexNormals();
   }
-  if (parsedUvs.length === (positions.length / 3) * 2) {
+  if (parsedUvs.length === (positions.length / 3) * 2 && positions.length > 0) {
     geometry.setAttribute('uv', new THREE.Float32BufferAttribute(parsedUvs, 2));
   }
   return geometry;
+}
+
+// Module-level model bundle cache to eliminate redundant ~1.1MB network fetches on remounts
+type BrainModelBundle = readonly [
+  leftJson: any,
+  rightJson: any,
+  cerebJson: any,
+  caudateJson: any,
+  putamenJson: any,
+  naccJson: any,
+  callosumJson: any,
+  thalamusJson: any,
+  ponsJson: any,
+  midbrainJson: any,
+  medullaJson: any,
+];
+
+let cachedModelData: BrainModelBundle | null = null;
+let pendingModelPromise: Promise<BrainModelBundle> | null = null;
+
+async function fetchBrainModelBundle(): Promise<BrainModelBundle> {
+  if (cachedModelData) return cachedModelData;
+  if (!pendingModelPromise) {
+    const fetchJson = async (url: string) => {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Failed to load ${url} (status: ${res.status})`);
+      return res.json();
+    };
+
+    pendingModelPromise = Promise.all([
+      fetchJson('/models/brain/Brain-cerebral_hemisphere-left.js'),
+      fetchJson('/models/brain/Brain-cerebral_hemisphere-right.js'),
+      fetchJson('/models/brain/Brain-cerebellum.js'),
+      fetchJson('/models/brain/Brain-basal_ganglia-caudate_nucleus.js'),
+      fetchJson('/models/brain/Brain-basal_ganglia-putamen.js'),
+      fetchJson('/models/brain/Brain-basal_ganglia-nucleus_accumbens.js'),
+      fetchJson('/models/brain/Brain-corpus_callosum.js'),
+      fetchJson('/models/brain/Brain-thalamus.js'),
+      fetchJson('/models/brain/Brain-brain_stem-pons.js'),
+      fetchJson('/models/brain/Brain-brain_stem-midbrain.js'),
+      fetchJson('/models/brain/Brain-brain_stem-medulla_oblongata.js'),
+    ] as const)
+      .then((data) => {
+        cachedModelData = data;
+        return data;
+      })
+      .catch((err) => {
+        pendingModelPromise = null; // Clear so subsequent attempts can retry
+        throw err;
+      });
+  }
+  return pendingModelPromise;
 }
 
 // Region colors matching ADHD Compass color palette
@@ -249,12 +306,11 @@ export default function Brain3DVisualizer({
     async function loadModels() {
       try {
         setLoading(true);
+        setLoadError(null);
 
-        const fetchJson = async (url: string) => {
-          const res = await fetch(url);
-          if (!res.ok) throw new Error(`Failed to load ${url}`);
-          return res.json();
-        };
+        const modelBundle = await fetchBrainModelBundle();
+
+        if (isCancelled) return;
 
         const [
           leftJson,
@@ -268,21 +324,7 @@ export default function Brain3DVisualizer({
           ponsJson,
           midbrainJson,
           medullaJson
-        ] = await Promise.all([
-          fetchJson('/models/brain/Brain-cerebral_hemisphere-left.js'),
-          fetchJson('/models/brain/Brain-cerebral_hemisphere-right.js'),
-          fetchJson('/models/brain/Brain-cerebellum.js'),
-          fetchJson('/models/brain/Brain-basal_ganglia-caudate_nucleus.js'),
-          fetchJson('/models/brain/Brain-basal_ganglia-putamen.js'),
-          fetchJson('/models/brain/Brain-basal_ganglia-nucleus_accumbens.js'),
-          fetchJson('/models/brain/Brain-corpus_callosum.js'),
-          fetchJson('/models/brain/Brain-thalamus.js'),
-          fetchJson('/models/brain/Brain-brain_stem-pons.js'),
-          fetchJson('/models/brain/Brain-brain_stem-midbrain.js'),
-          fetchJson('/models/brain/Brain-brain_stem-medulla_oblongata.js'),
-        ]);
-
-        if (isCancelled) return;
+        ] = modelBundle;
 
         // Parse Left Hemisphere
         const leftGeo = parseLegacyModel(leftJson);
@@ -452,6 +494,21 @@ export default function Brain3DVisualizer({
       isCancelled = true;
       window.removeEventListener('resize', handleResize);
       if (reqIdRef.current) cancelAnimationFrame(reqIdRef.current);
+      if (controlsRef.current) {
+        controlsRef.current.dispose();
+      }
+      if (sceneRef.current) {
+        sceneRef.current.traverse((obj) => {
+          if (obj instanceof THREE.Mesh) {
+            obj.geometry?.dispose();
+            if (Array.isArray(obj.material)) {
+              obj.material.forEach((m) => m.dispose());
+            } else if (obj.material) {
+              obj.material.dispose();
+            }
+          }
+        });
+      }
       if (rendererRef.current) {
         rendererRef.current.dispose();
       }
@@ -615,6 +672,16 @@ export default function Brain3DVisualizer({
     cerebMat.needsUpdate = true;
 
     // 4. Connection Arcs & Dedicated Nodal Hubs in Connections Mode
+    arcsGroup.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        child.geometry?.dispose();
+        if (Array.isArray(child.material)) {
+          child.material.forEach((m) => m.dispose());
+        } else if (child.material) {
+          child.material.dispose();
+        }
+      }
+    });
     arcsGroup.clear();
     if (isConnectionsMode) {
       const nodes = CIRCUIT_NODES[selectedCircuitId];

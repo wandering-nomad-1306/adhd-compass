@@ -1,14 +1,46 @@
-/*
-  X-Frame-Options: SAMEORIGIN
-  X-Content-Type-Options: nosniff
-  Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: camera=(), microphone=(), geolocation=()
+# =============================================================================
+# ADHD Compass - Cloudflare / Origin HTTP Headers Configuration
+# =============================================================================
 
+# Global Security & Baseline Headers
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+# HTML Documents & SPA Dynamic Entrypoints
+# Must revalidate with origin to ensure instantaneous updates upon deployment
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Hashed Static Assets (Vite JavaScript, CSS, Bundles) - 1 Year Immutable
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
-/images/*
-  Cache-Control: public, max-age=2592000, immutable
+# 3D Brain Anatomy Models & Geometry Chunks - 1 Year Immutable
+/models/*
+  Cache-Control: public, max-age=31536000, immutable
 
+# Static Media & Images - 1 Year Immutable
+/images/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Static PDFs & Reference Documents - 1 Year Immutable
 /resources/*
-  Cache-Control: public, max-age=2592000, immutable
+  Cache-Control: public, max-age=31536000, immutable
+
+# Search Engine & Crawler Metadata
+/robots.txt
+  Cache-Control: public, max-age=86400, must-revalidate
+
+/sitemap.xml
+  Cache-Control: public, max-age=86400, must-revalidate
+
+/schema.json
+  Cache-Control: public, max-age=86400, must-revalidate

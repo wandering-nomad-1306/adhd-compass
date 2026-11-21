@@ -1,0 +1,8 @@
+# =============================================================================
+# ADHD Compass - Example Terraform Variables Configuration
+# Copy this file to terraform.tfvars and update with your actual credentials.
+# =============================================================================
+
+cloudflare_api_token = "your_cloudflare_api_token_here"
+cloudflare_zone_id   = "your_cloudflare_zone_id_here"
+zone_name            = "adhdcompass.in"

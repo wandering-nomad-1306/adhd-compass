@@ -31,7 +31,7 @@ export interface SEOProps {
 }
 
 const BASE_URL = 'https://adhdcompass.in';
-const DEFAULT_OG_IMAGE = `${BASE_URL}/hero-reference.png`;
+const DEFAULT_OG_IMAGE = `${BASE_URL}/og-preview.png`;
 
 /**
  * SEO & Structured Data Manager for ADHD Compass

@@ -33,7 +33,7 @@ function normalizePathname(pathname: string) {
 }
 
 function buildStructuredData(pathname: string, seo: SeoConfig): object {
-  const canonicalUrl = `${SITE_URL}${pathname === "/" ? "" : pathname}`;
+  const canonicalUrl = `${SITE_URL}${pathname === "/" ? "/" : pathname}`;
   const graph: any[] = [];
 
   // 1. Organization & Website baseline
@@ -43,7 +43,7 @@ function buildStructuredData(pathname: string, seo: SeoConfig): object {
     name: "ADHD Compass",
     alternateName: "ADHD Compass Educational Initiative",
     url: SITE_URL,
-    logo: `${SITE_URL}/hero-reference.png`,
+    logo: `${SITE_URL}/images/adhd-compass-logo.png`,
     description:
       "An independent, evidence-based, compassionate educational compass translating ADHD neurobiology, pharmacology, and lived experiences into accessible insights.",
     publishingPrinciples: `${SITE_URL}/about`,
@@ -70,7 +70,19 @@ function buildStructuredData(pathname: string, seo: SeoConfig): object {
   };
 
   if (pathname === "/") {
-    graph.push(orgSchema, websiteSchema);
+    const homeMedicalSchema = {
+      "@type": "MedicalWebPage",
+      name: "ADHD Compass",
+      url: `${SITE_URL}/`,
+      description:
+        "Evidence-based, interactive educational guide and assessment for Attention Deficit Hyperactivity Disorder.",
+      about: {
+        "@type": "MedicalCondition",
+        name: "Attention Deficit Hyperactivity Disorder",
+        alternateName: "ADHD",
+      },
+    };
+    graph.push(orgSchema, websiteSchema, homeMedicalSchema);
   } else if (pathname === "/about") {
     graph.push(orgSchema, {
       "@type": "AboutPage",
@@ -93,7 +105,7 @@ function buildStructuredData(pathname: string, seo: SeoConfig): object {
         "@type": "ListItem",
         position: idx + 1,
         name: crumb.name,
-        item: `${SITE_URL}${crumb.path === "/" ? "" : crumb.path}`,
+        item: `${SITE_URL}${crumb.path === "/" ? "/" : crumb.path}`,
       })),
     });
   }
@@ -149,6 +161,28 @@ function buildStructuredData(pathname: string, seo: SeoConfig): object {
     });
   }
 
+  // 5. Quiz schema for screening test
+  if (seo.quizSchema || pathname === "/chapter/getting-diagnosed/test") {
+    const quiz = seo.quizSchema || {
+      name: "Adult ADHD Self-Report Scale (ASRS-v1.1) Screener",
+      description:
+        "An interactive 18-question screening tool based on the World Health Organization ASRS-v1.1 criteria to assess ADHD symptoms.",
+      educationalLevel: "Adult",
+      about: {
+        "@type": "MedicalCondition",
+        name: "ADHD",
+      },
+    };
+    graph.push({
+      "@context": "https://schema.org",
+      "@type": "Quiz",
+      name: quiz.name,
+      description: quiz.description,
+      educationalLevel: quiz.educationalLevel,
+      about: quiz.about,
+    });
+  }
+
   return {
     "@context": "https://schema.org",
     "@graph": graph,
@@ -177,13 +211,30 @@ function renderHtml(
     .replace(/\s*<meta\s+property=["']og:title["'][^>]*>/gi, "")
     .replace(/\s*<meta\s+property=["']og:description["'][^>]*>/gi, "")
     .replace(/\s*<meta\s+property=["']og:url["'][^>]*>/gi, "")
+    .replace(/\s*<meta\s+[^>]*property=["']og:image(?::[^"']*)?["'][^>]*>/gi, "")
     .replace(/\s*<meta\s+name=["']twitter:card["'][^>]*>/gi, "")
     .replace(/\s*<meta\s+name=["']twitter:title["'][^>]*>/gi, "")
     .replace(/\s*<meta\s+name=["']twitter:description["'][^>]*>/gi, "")
+    .replace(/\s*<meta\s+[^>]*name=["']twitter:image(?::[^"']*)?["'][^>]*>/gi, "")
     .replace(
       /\s*<script[^>]+id=["']adhd-compass-website-schema["'][\s\S]*?<\/script>/gi,
       "",
+    )
+    .replace(
+      /\s*<script[^>]+id=["']adhd-compass-structured-data["'][\s\S]*?<\/script>/gi,
+      "",
+    )
+    .replace(
+      /\s*<script[^>]+id=["']adhd-compass-quiz-schema["'][\s\S]*?<\/script>/gi,
+      "",
     );
+
+  if (pathname !== "/") {
+    html = html.replace(
+      /\s*<script[^>]*type=["']application\/ld\+json["'][^>]*>[\s\S]*?"@type":\s*"MedicalWebPage"[\s\S]*?<\/script>/gi,
+      "",
+    );
+  }
 
   const structuredData = buildStructuredData(pathname, seo);
 
@@ -198,13 +249,25 @@ function renderHtml(
     `<meta property="og:title" content="${escapeHtml(seo.title)}" />`,
     `<meta property="og:description" content="${escapeHtml(seo.description)}" />`,
     `<meta property="og:url" content="${canonical}" />`,
+    `<meta property="og:image" content="${SITE_URL}/og-preview.png" />`,
+    `<meta property="og:image:width" content="1200" />`,
+    `<meta property="og:image:height" content="630" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:title" content="${escapeHtml(seo.title)}" />`,
     `<meta name="twitter:description" content="${escapeHtml(seo.description)}" />`,
+    `<meta name="twitter:image" content="${SITE_URL}/og-preview.png" />`,
     `<script id="adhd-compass-structured-data" type="application/ld+json">${JSON.stringify(
       structuredData,
     )}</script>`,
   ];
+
+  if (seo.quizSchema) {
+    tags.push(
+      `<script id="adhd-compass-quiz-schema" type="application/ld+json">${JSON.stringify(
+        seo.quizSchema,
+      )}</script>`,
+    );
+  }
 
   return html.replace(
     "</head>",

@@ -8,6 +8,18 @@ export interface FAQItem {
   answer: string;
 }
 
+export interface QuizSchema {
+  "@context": "https://schema.org";
+  "@type": "Quiz";
+  name: string;
+  description: string;
+  educationalLevel: string;
+  about: {
+    "@type": "MedicalCondition";
+    name: string;
+  };
+}
+
 export type SeoConfig = {
   title: string;
   description: string;
@@ -15,6 +27,7 @@ export type SeoConfig = {
   index?: boolean;
   breadcrumbs?: BreadcrumbItem[];
   faqItems?: FAQItem[];
+  quizSchema?: QuizSchema;
 };
 
 export const SITE_URL = "https://adhdcompass.in";
@@ -28,9 +41,9 @@ export const NOT_FOUND_SEO: SeoConfig = {
 
 export const SEO_BY_PATH: Record<string, SeoConfig> = {
   "/": {
-    title: "ADHD Compass | Understanding Your Brain & Attention",
+    title: "ADHD Compass | Interactive ADHD Guide & Assessment",
     description:
-      "An independent, ad-free guide to ADHD neuroscience, executive dysfunction, diagnosis, and treatments. Grounded in clinical evidence and lived experience.",
+      "Understand the ADHD brain through interactive 3D visualizations, evidence-based coping strategies, and free clinical self-assessments.",
     type: "website",
     index: true,
   },
@@ -203,6 +216,18 @@ export const SEO_BY_PATH: Record<string, SeoConfig> = {
       { name: "Getting Diagnosed", path: "/chapter/getting-diagnosed" },
       { name: "Screening Test", path: "/chapter/getting-diagnosed/test" },
     ],
+    quizSchema: {
+      "@context": "https://schema.org",
+      "@type": "Quiz",
+      name: "Adult ADHD Self-Report Scale (ASRS-v1.1) Screener",
+      description:
+        "An interactive 18-question screening tool based on the World Health Organization ASRS-v1.1 criteria to assess ADHD symptoms.",
+      educationalLevel: "Adult",
+      about: {
+        "@type": "MedicalCondition",
+        name: "ADHD",
+      },
+    },
   },
 
   "/chapter/accommodations": {

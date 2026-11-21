@@ -1,0 +1,46 @@
+﻿{
+    "phase":  "http_request_cache_settings",
+    "description":  "Production Edge and Browser caching rules for static assets and error responses",
+    "name":  "ADHD Compass Cache Ruleset",
+    "rules":  [
+                  {
+                      "action_parameters":  {
+                                                "browser_ttl":  {
+                                                                    "default":  31536000,
+                                                                    "mode":  "override_origin"
+                                                                },
+                                                "cache":  true,
+                                                "serve_stale":  {
+                                                                    "disable_stale_while_revalidate":  false
+                                                                },
+                                                "edge_ttl":  {
+                                                                 "default":  31536000,
+                                                                 "mode":  "override_origin"
+                                                             }
+                                            },
+                      "description":  "Edge Cache All Static Assets 1 Year TTL",
+                      "enabled":  true,
+                      "action":  "set_cache_settings",
+                      "expression":  "http.request.uri.path.extension in {\"js\" \"css\" \"png\" \"jpg\" \"jpeg\" \"webp\" \"avif\" \"svg\" \"woff2\" \"woff\" \"glb\" \"gltf\" \"ico\"}"
+                  },
+                  {
+                      "action_parameters":  {
+                                                "edge_ttl":  {
+                                                                 "status_code_ttl":  [
+                                                                                         {
+                                                                                             "value":  7200,
+                                                                                             "status_code":  404
+                                                                                         }
+                                                                                     ],
+                                                                 "mode":  "override_origin"
+                                                             },
+                                                "cache":  true
+                                            },
+                      "description":  "Edge Cache 404 Status Responses",
+                      "enabled":  true,
+                      "action":  "set_cache_settings",
+                      "expression":  "(http.response.code eq 404)"
+                  }
+              ],
+    "kind":  "zone"
+}

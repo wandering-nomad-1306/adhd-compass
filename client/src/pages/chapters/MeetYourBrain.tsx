@@ -17,12 +17,30 @@ import {
   Sparkles,
   Target,
   Zap,
+  Compass,
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { Suspense, lazy, useMemo, useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import ChapterLayoutWide from '@/components/ChapterLayoutWide';
 import SourceList from '@/components/SourceList';
-import Brain3DVisualizer, { RegionId, CircuitId } from '@/components/Brain3DVisualizer';
+import type { RegionId, CircuitId } from '@/components/Brain3DVisualizer';
+
+const Brain3DVisualizer = lazy(() => import('@/components/Brain3DVisualizer'));
+
+function BrainVisualizerFallback() {
+  return (
+    <div
+      className="relative mx-auto w-full aspect-[8/5] min-h-[380px] max-h-[520px] overflow-hidden rounded-[24px] bg-[#fdfcf9] border border-stone-200/90 shadow-[0_8px_24px_rgba(89,97,88,0.08)] flex flex-col items-center justify-center bg-warm-cream/90 select-none"
+      aria-label="Loading 3D brain model"
+    >
+      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sage-green/15 text-sage-green animate-pulse">
+        <Compass className="h-6 w-6 animate-spin" />
+      </div>
+      <p className="mt-3 text-sm font-semibold text-foreground">Loading anatomical 3D brain model…</p>
+      <p className="text-xs text-muted-foreground mt-1">Authentic human gyri, sulci, and frontostriatal circuits</p>
+    </div>
+  );
+}
 
 // Detail block interface matching official MeetYourBrain / BrainNetworkViz
 interface ContentBlock {
@@ -667,12 +685,14 @@ export default function MeetYourBrain() {
               {/* Left Column: 3D Brain Viewer & Region Pills */}
               <div className="min-w-0 border-b border-sage-green/10 bg-[#fbf7ed] p-4 sm:p-6 lg:border-b-0 lg:border-r">
                 {/* Authentic 3D Brain Visualizer */}
-                <Brain3DVisualizer
-                  view={view}
-                  selectedRegionId={selectedRegionId}
-                  selectedCircuitId={selectedCircuitId}
-                  onSelectRegion={selectRegion}
-                />
+                <Suspense fallback={<BrainVisualizerFallback />}>
+                  <Brain3DVisualizer
+                    view={view}
+                    selectedRegionId={selectedRegionId}
+                    selectedCircuitId={selectedCircuitId}
+                    onSelectRegion={selectRegion}
+                  />
+                </Suspense>
 
                 {/* Region Selection Buttons */}
                 {view === 'regions' ? (

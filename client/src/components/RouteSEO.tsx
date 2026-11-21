@@ -1,4 +1,4 @@
-﻿import { useEffect } from "react";
+import { useEffect } from "react";
 import { useLocation } from "wouter";
 import { NOT_FOUND_SEO, SEO_BY_PATH, SITE_URL } from "@shared/seo";
 
@@ -59,10 +59,14 @@ export default function RouteSEO() {
     upsertMeta("property", "og:title", seo.title);
     upsertMeta("property", "og:description", seo.description);
     upsertMeta("property", "og:url", canonical);
+    upsertMeta("property", "og:image", `${SITE_URL}/og-preview.png`);
+    upsertMeta("property", "og:image:width", "1200");
+    upsertMeta("property", "og:image:height", "630");
 
-    upsertMeta("name", "twitter:card", "summary");
+    upsertMeta("name", "twitter:card", "summary_large_image");
     upsertMeta("name", "twitter:title", seo.title);
     upsertMeta("name", "twitter:description", seo.description);
+    upsertMeta("name", "twitter:image", `${SITE_URL}/og-preview.png`);
 
     upsertCanonical(canonical);
 

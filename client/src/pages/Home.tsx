@@ -28,15 +28,26 @@ export default function Home() {
         transition={{ duration: 0.8 }}
       >
         {/* Background image with overlay */}
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage: 'url(/images/hero-background.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundAttachment: 'fixed',
-          }}
-        >
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+          <picture>
+            <source
+              type="image/avif"
+              srcSet="/images/hero-bg-480w.avif 480w, /images/hero-bg-960w.avif 960w, /images/hero-bg-1920w.avif 1920w"
+              sizes="100vw"
+            />
+            <source
+              type="image/webp"
+              srcSet="/images/hero-bg-480w.webp 480w, /images/hero-bg-960w.webp 960w, /images/hero-bg-1920w.webp 1920w"
+              sizes="100vw"
+            />
+            <img
+              src="/images/hero-bg-1920w.jpg"
+              alt="ADHD Compass"
+              className="w-full h-full object-cover object-center"
+              fetchPriority="high"
+              decoding="async"
+            />
+          </picture>
           <div className="absolute inset-0" />
         </div>
 

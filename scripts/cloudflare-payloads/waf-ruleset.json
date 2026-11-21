@@ -1,0 +1,26 @@
+﻿{
+    "phase":  "http_request_firewall_custom",
+    "description":  "Production WAF rules protecting adhdcompass.in against secret scrapers, hostile subnets, and unmasked bots",
+    "name":  "ADHD Compass Custom WAF Ruleset",
+    "rules":  [
+                  {
+                      "enabled":  true,
+                      "description":  "Drop Secret \u0026 Vulnerability Scanners",
+                      "action":  "block",
+                      "expression":  "(http.request.uri.path contains \".env\") or (http.request.uri.path contains \".tfstate\") or (http.request.uri.path contains \"wp-config\") or (http.request.uri.path contains \".git\") or (http.request.uri.path contains \".bak\") or (http.request.uri.path contains \".swp\") or (http.request.uri.path contains \"phpinfo\") or (http.request.uri.path contains \"/terraform\")"
+                  },
+                  {
+                      "enabled":  true,
+                      "description":  "Block Hostile Scanning Subnet",
+                      "action":  "block",
+                      "expression":  "ip.src in {185.177.72.0/24}"
+                  },
+                  {
+                      "enabled":  true,
+                      "description":  "Challenge Unmasked Bot User-Agents",
+                      "action":  "managed_challenge",
+                      "expression":  "((http.user_agent contains \"TLM-Audit-Scanner\") or (http.user_agent contains \"curl/\") or (http.user_agent contains \"python-requests\")) and not (starts_with(http.request.uri.path, \"/api/webhooks\"))"
+                  }
+              ],
+    "kind":  "zone"
+}
