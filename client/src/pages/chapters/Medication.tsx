@@ -571,6 +571,8 @@ export default function Medication() {
       maxWidthClass="max-w-[76rem]"
       onPrevious={() => setLocation('/chapter/what-helps')}
       onNext={() => setLocation('/chapter/getting-diagnosed')}
+      previousHref="/chapter/what-helps"
+      nextHref="/chapter/getting-diagnosed"
     >
       <motion.div className="space-y-12" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
 

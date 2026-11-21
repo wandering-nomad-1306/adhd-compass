@@ -6,6 +6,7 @@ import {
   SITE_URL,
   type SeoConfig,
 } from "../shared/seo";
+import { getStaticBodyHtml } from "./prerender-content";
 
 const rootDir = process.cwd();
 const outDir = path.join(rootDir, "dist", "public");
@@ -269,10 +270,18 @@ function renderHtml(
     );
   }
 
-  return html.replace(
+  html = html.replace(
     "</head>",
     `  ${tags.join("\n    ")}\n  </head>`,
   );
+
+  const bodyHtml = getStaticBodyHtml(pathname, seo);
+  html = html.replace(
+    '<div id="root"></div>',
+    `<div id="root">${bodyHtml}</div>`,
+  );
+
+  return html;
 }
 
 for (const [route, seo] of Object.entries(SEO_BY_PATH)) {

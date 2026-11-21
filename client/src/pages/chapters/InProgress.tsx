@@ -25,6 +25,8 @@ export default function InProgress({ title, chapterNumber, previousPath, nextPat
       maxWidthClass="max-w-[76rem]"
       onPrevious={previousPath ? () => setLocation(previousPath) : undefined}
       onNext={nextPath ? () => setLocation(nextPath) : undefined}
+      previousHref={previousPath}
+      nextHref={nextPath}
     >
       <motion.section
         className="mx-auto flex min-h-[50svh] w-full max-w-2xl flex-col items-center justify-center rounded-3xl border border-[#6b4d3d]/20 bg-white/80 backdrop-blur-sm p-8 text-center shadow-sm md:p-12"

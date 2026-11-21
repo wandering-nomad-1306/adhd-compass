@@ -1,7 +1,7 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { BookOpenText, Compass, Home, Menu, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'wouter';
+import { Link, useLocation } from 'wouter';
 
 interface TopicLink {
   id: string;
@@ -128,13 +128,13 @@ export default function PageDock() {
             </div>
 
             <nav className="grid grid-cols-2 gap-2 border-b border-sage-green/10 pb-4" aria-label="Site navigation">
-              <button
-                type="button"
-                onClick={() => { setOpen(false); setLocation('/'); }}
+              <Link
+                href="/"
+                onClick={() => setOpen(false)}
                 className="flex items-center gap-2 rounded-2xl bg-white/70 px-3 py-3 text-left text-sm font-semibold text-foreground transition hover:bg-white"
               >
                 <Home className="h-4 w-4 text-sage-green" /> Home
-              </button>
+              </Link>
               <button
                 type="button"
                 onClick={() => { setOpen(false); window.dispatchEvent(new CustomEvent('open-chapter-navigator')); }}

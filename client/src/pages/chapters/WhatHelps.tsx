@@ -27,7 +27,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import ChapterLayoutWide from '@/components/ChapterLayoutWide';
 import SourceList from '@/components/SourceList';
 import VariableProximity from '@/components/VariableProximity';
@@ -1144,6 +1144,8 @@ export default function WhatHelps() {
       badgeText="Chapter 5 · Practical Support"
       onPrevious={() => setLocation('/chapter/brain')}
       onNext={() => setLocation('/chapter/medication')}
+      previousHref="/chapter/brain"
+      nextHref="/chapter/medication"
       estimatedReadingTime="8 min read"
       bgClass="bg-[#FAF8F5]"
       accentColor="#34533d"
@@ -1276,13 +1278,12 @@ export default function WhatHelps() {
                     <p className="mt-3 text-sm font-semibold text-sage-green">{item.action}</p>
                   </div>
                   {item.route && (
-                    <button
-                      type="button"
-                      onClick={() => setLocation(item.route!)}
+                    <Link
+                      href={item.route}
                       className="inline-flex shrink-0 items-center gap-2 self-start rounded-xl border border-sage-green/25 bg-white px-4 py-2.5 text-sm font-semibold text-sage-green shadow-2xs transition hover:bg-sage-green/[0.08]"
                     >
                       Open chapter <ChevronRight className="h-4 w-4" />
-                    </button>
+                    </Link>
                   )}
                   {item.anchor && (
                     <a

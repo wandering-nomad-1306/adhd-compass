@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useLocation } from 'wouter';
+import { useLocation, Link } from 'wouter';
 import InteractiveCompass from '@/components/InteractiveCompass';
 import { useEffect, useState } from 'react';
 import SiteFooter from '@/components/SiteFooter';
@@ -170,16 +170,19 @@ export default function Home() {
               {
                 icon: '🧠',
                 title: 'Your Brain',
+                href: '/chapter/brain',
                 description: 'Understand the neuroscience behind ADHD—how your brain actually works and why it feels the way it does.',
               },
               {
                 icon: '💡',
                 title: 'Your Experiences',
+                href: '/chapter/why-feels',
                 description: 'Learn why you struggle with certain things and excel at others.',
               },
               {
                 icon: '🛠️',
                 title: 'What Helps',
+                href: '/chapter/what-helps',
                 description: 'Practical, evidence-informed strategies for reducing everyday difficulties and making tasks easier to manage.',
               },
             ].map((card, index) => (
@@ -191,9 +194,11 @@ export default function Home() {
                 transition={{ delay: index * 0.1, duration: 0.6 }}
                 viewport={{ once: true }}
               >
-                <div className="text-4xl mb-4">{card.icon}</div>
-                <h3 className="text-xl font-serif font-bold mb-3 text-foreground">{card.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{card.description}</p>
+                <Link href={card.href} className="block text-inherit no-underline">
+                  <div className="text-4xl mb-4">{card.icon}</div>
+                  <h3 className="text-xl font-serif font-bold mb-3 text-foreground">{card.title}</h3>
+                  <p className="text-muted-foreground leading-relaxed">{card.description}</p>
+                </Link>
               </motion.div>
             ))}
           </div>

@@ -31,6 +31,8 @@ export default function GettingDiagnosed() {
       maxWidthClass="max-w-[76rem]"
       onPrevious={() => setLocation('/chapter/medication')}
       onNext={() => setLocation('/chapter/accommodations')}
+      previousHref="/chapter/medication"
+      nextHref="/chapter/accommodations"
     >
       <div className="max-w-4xl mx-auto space-y-12 py-2">
         {/* ================================================================== */}

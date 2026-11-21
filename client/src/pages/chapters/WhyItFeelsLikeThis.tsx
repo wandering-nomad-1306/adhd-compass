@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { ArrowRight, ChevronDown, Clock } from 'lucide-react';
-import { useLocation } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import ChapterLayoutWide from '@/components/ChapterLayoutWide';
 import SourceList from '@/components/SourceList';
 
@@ -126,6 +126,8 @@ export default function WhyItFeelsLikeThis() {
       maxWidthClass="max-w-[76rem]"
       onPrevious={() => setLocation('/chapter/welcome')}
       onNext={() => setLocation('/chapter/what-is')}
+      previousHref="/chapter/welcome"
+      nextHref="/chapter/what-is"
     >
       <motion.div className="space-y-12" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
         {/* Intro Overview Card */}
@@ -223,20 +225,18 @@ export default function WhyItFeelsLikeThis() {
             Understanding your brain’s operating manual is the essential first step. The remaining chapters translate these neurobiological realities into <strong>evidence-based treatments</strong>, including comprehensive clinical evaluations, ADHD-adapted cognitive behavioral tools, point-of-performance accommodations, and first-line medical therapies.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={() => setLocation('/chapter/what-helps')}
+            <Link
+              href="/chapter/what-helps"
               className="inline-flex items-center gap-2 rounded-xl bg-sage-green px-5 py-3 text-sm font-bold text-white shadow-xs hover:bg-sage-green/90 transition-all"
             >
               Explore Practical Strategies (Chapter 5) <ArrowRight className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setLocation('/chapter/medication')}
+            </Link>
+            <Link
+              href="/chapter/medication"
               className="inline-flex items-center gap-2 rounded-xl border border-sage-green/30 bg-white px-5 py-3 text-sm font-bold text-sage-green shadow-2xs hover:bg-sage-green/[0.08] transition-all"
             >
               Medication Guide (Chapter 6) <ArrowRight className="h-4 w-4" />
-            </button>
+            </Link>
           </div>
         </motion.section>
 
@@ -267,13 +267,12 @@ export default function WhyItFeelsLikeThis() {
           <p className="mx-auto mt-3 max-w-2xl leading-relaxed text-muted-foreground">
             Connect these everyday experiences to the formal clinical definitions, DSM-5 diagnostic thresholds, and the three presentations of ADHD.
           </p>
-          <button
-            type="button"
-            onClick={() => setLocation('/chapter/what-is')}
+          <Link
+            href="/chapter/what-is"
             className="mt-7 inline-flex items-center justify-center rounded-xl bg-sage-green px-7 py-3 font-sans font-bold text-warm-cream shadow-md transition hover:-translate-y-0.5 hover:shadow-lg"
           >
             Next: What is ADHD?
-          </button>
+          </Link>
         </motion.section>
       </motion.div>
     </ChapterLayoutWide>

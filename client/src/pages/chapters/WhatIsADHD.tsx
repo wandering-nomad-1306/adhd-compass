@@ -109,6 +109,8 @@ export default function WhatIsADHD() {
       maxWidthClass="max-w-[76rem]"
       onPrevious={() => setLocation('/chapter/why-feels')}
       onNext={() => setLocation('/chapter/brain')}
+      previousHref="/chapter/why-feels"
+      nextHref="/chapter/brain"
     >
       <motion.div className="space-y-12" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
         {/* Foundation Definition Banner */}

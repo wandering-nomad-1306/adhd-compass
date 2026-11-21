@@ -12,7 +12,7 @@ import {
   SlidersHorizontal,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useLocation } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import ChapterLayoutWide from '@/components/ChapterLayoutWide';
 import SourceList from '@/components/SourceList';
 
@@ -174,6 +174,8 @@ export default function ExecutiveFunctions() {
       maxWidthClass="max-w-[76rem]"
       onPrevious={() => setLocation('/chapter/brain')}
       onNext={() => setLocation('/chapter/what-helps')}
+      previousHref="/chapter/brain"
+      nextHref="/chapter/what-helps"
     >
       <motion.div className="space-y-12" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.45 }}>
 
@@ -340,13 +342,12 @@ export default function ExecutiveFunctions() {
               <p className="mt-4 leading-relaxed text-foreground">
                 Support does not require “fixing” a person’s character. The goal is to reduce unnecessary executive demands, make the next action visible, and use treatment or accommodations when the remaining difficulty still interferes with daily life.
               </p>
-              <button
-                type="button"
-                onClick={() => setLocation('/chapter/what-helps')}
+              <Link
+                href="/chapter/what-helps"
                 className="mt-6 inline-flex items-center gap-2 rounded-xl bg-sage-green px-5 py-3 font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
               >
                 Open practical strategies <ArrowRight className="h-4 w-4" />
-              </button>
+              </Link>
             </div>
           </div>
         </section>

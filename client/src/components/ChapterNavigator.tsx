@@ -1,7 +1,7 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { Home, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import InteractiveCompass from '@/components/InteractiveCompass';
 
 const CHAPTER_PATHS: Record<string, string> = {
@@ -161,16 +161,16 @@ export default function ChapterNavigator() {
               </h2>
 
               <div className="absolute right-3 top-3 z-[80] flex items-center gap-2 sm:right-5 sm:top-5">
-                <button
-                  type="button"
-                  onClick={() => navigate('/')}
+                <Link
+                  href="/"
+                  onClick={() => setOpen(false)}
                   className="flex h-11 items-center justify-center gap-2 rounded-xl border border-sage-green/15 bg-white/92 px-3.5 text-sm font-semibold text-sage-green shadow-sm backdrop-blur transition hover:bg-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sage-green/20"
                   aria-label="Go to the ADHD Compass homepage"
                   title="Home"
                 >
                   <Home className="h-4 w-4" />
                   <span className="hidden sm:inline">Home</span>
-                </button>
+                </Link>
 
                 <button
                   ref={closeButtonRef}

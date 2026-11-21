@@ -421,17 +421,20 @@ export default function InteractiveCompass({ onNavigate, selectedId }: { onNavig
               className="absolute"
               style={{ left: `${left}%`, top: `${top}%`, transform: 'translate(-50%, -50%)' }}
             >
-              <motion.button
-                type="button"
+              <motion.a
+                href={`/chapter/${point.id}`}
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: index * 0.05, duration: 0.4 }}
-                onClick={() => onNavigate(point.id)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  onNavigate(point.id);
+                }}
                 onPointerEnter={() => activateTab(index)}
                 onPointerLeave={deactivateTab}
                 onFocus={() => activateTab(index)}
                 onBlur={deactivateTab}
-                className="relative flex aspect-square w-[clamp(4.3rem,8.4vmin,5.15rem)] flex-col items-center justify-center overflow-hidden rounded-full border-2 px-2 text-center transition-[background-color,border-color,color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-4"
+                className="relative flex aspect-square w-[clamp(4.3rem,8.4vmin,5.15rem)] flex-col items-center justify-center overflow-hidden rounded-full border-2 px-2 text-center transition-[background-color,border-color,color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-4 select-none cursor-pointer"
                 style={{
                   backgroundColor: isHovered ? point.accent : 'rgba(255, 255, 255, 0.94)',
                   borderColor: isSectorActive ? point.accent : `rgba(${point.accentRgb}, 0.32)`,
@@ -462,7 +465,7 @@ export default function InteractiveCompass({ onNavigate, selectedId }: { onNavig
                 <span className="relative z-10 whitespace-pre-line text-[clamp(0.6rem,1.18vmin,0.72rem)] font-semibold leading-[1.08] tracking-[-0.01em]">
                   {point.shortLabel}
                 </span>
-              </motion.button>
+              </motion.a>
             </div>
           );
         })}

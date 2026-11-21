@@ -1,7 +1,7 @@
 import { motion, useReducedMotion, useScroll, useSpring } from 'framer-motion';
 import { ArrowLeft, Mail, Sparkles } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
-import { useLocation } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import SiteFooter from '@/components/SiteFooter';
 
 const scatteredTopics = [
@@ -79,13 +79,12 @@ export default function About() {
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#f7f3e9] text-foreground">
-      <button
-        type="button"
-        onClick={() => setLocation('/')}
+      <Link
+        href="/"
         className="fixed left-4 top-4 z-50 flex items-center gap-2 rounded-full border border-sage-green/15 bg-white/80 px-4 py-2 text-sm font-semibold text-foreground shadow-sm backdrop-blur-md transition hover:bg-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sage-green/20"
       >
         <ArrowLeft className="h-4 w-4" /> Home
-      </button>
+      </Link>
 
       <section className="relative flex min-h-[92svh] items-center justify-center px-5 py-24 sm:px-8">
         <div className="absolute inset-0 overflow-hidden" aria-hidden="true">

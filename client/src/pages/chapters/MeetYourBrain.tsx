@@ -607,6 +607,8 @@ export default function MeetYourBrain() {
       maxWidthClass="max-w-[76rem]"
       onPrevious={() => setLocation('/chapter/what-is')}
       onNext={() => setLocation('/chapter/what-helps')}
+      previousHref="/chapter/what-is"
+      nextHref="/chapter/what-helps"
     >
       <div className="space-y-16">
         {/* Section 1: Why neuroscience matters */}
@@ -961,14 +963,13 @@ export default function MeetYourBrain() {
                 <BookOpenCheck className="h-7 w-7" />
               </span>
             </div>
-            <button
-              type="button"
-              onClick={() => setLocation('/chapter/brain/executive-functions')}
+            <Link
+              href="/chapter/brain/executive-functions"
               className="mt-6 inline-flex items-center gap-2 rounded-xl bg-sage-green px-5 py-3 font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
             >
               Explore executive functions
               <ArrowRight className="h-4 w-4" />
-            </button>
+            </Link>
           </div>
         </section>
 
@@ -1099,14 +1100,13 @@ export default function MeetYourBrain() {
           <p className="mx-auto mt-3 max-w-2xl leading-relaxed text-muted-foreground">
             Use this neuroscience as context—not as a treatment plan. The next page explains the major support pathways and what each is designed to change.
           </p>
-          <button
-            type="button"
-            onClick={() => setLocation('/chapter/what-helps')}
+          <Link
+            href="/chapter/what-helps"
             className="mt-7 inline-flex items-center justify-center gap-2 rounded-xl bg-sage-green px-7 py-3 font-sans font-bold text-warm-cream shadow-md transition hover:-translate-y-0.5 hover:shadow-lg"
           >
             Next: What Actually Helps?
             <ArrowRight className="h-5 w-5" />
-          </button>
+          </Link>
         </motion.section>
       </div>
     </ChapterLayoutWide>
